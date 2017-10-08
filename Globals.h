@@ -2,6 +2,7 @@
 #define NESEMU_GLOBALS_H
 
 #include <stdint.h>
+typedef unsigned Bit;
 
 typedef uint8_t Byte;
 typedef int8_t SignedByte;
