@@ -27,13 +27,13 @@ struct Register {
 class CPU {
 public:	
 	CPU();
-	CPU(Memory cpuMemory);
+	CPU(Memory memory);
 
 	Register regs;
 
 	void step();
 
 private:
-	Memory cpuMemory;
+	Memory memory;
 };
 #endif

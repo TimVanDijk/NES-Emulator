@@ -4,8 +4,8 @@ using namespace std;
 
 CPU::CPU() { }
 
-CPU::CPU(Memory cpuMemory) {
-	this->cpuMemory = cpuMemory;
+CPU::CPU(Memory memory) {
+	this->memory = memory;
 }
 
 void CPU::step() {
