@@ -8,7 +8,7 @@ public:
 	Memory();
 
 	Byte read(Address addr);
-	void write(Address addr);
+	void write(Address addr, Byte value);
 
 private:
 	Byte ram [0x800];		// 0x0000-0x0799 2KB internal RAM
@@ -20,5 +20,6 @@ private:
 	Byte prgRomB [0x4000];	// 0xC000-0xFFFF PRG-ROM
 
 	Byte* translate(Address addr);
+
 };
 #endif
