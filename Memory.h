@@ -3,12 +3,18 @@
 
 #include "Globals.h"
 
+#include <string.h>
+
 class Memory {
 public:	
 	Memory();
 
 	Byte read(Address addr);
+	Word read16(Address addr);
 	void write(Address addr, Byte value);
+	void reset();
+	void setPrgRomA(Byte* data);
+	void setPrgRomB(Byte* data);
 
 private:
 	Byte ram [0x800];		// 0x0000-0x0799 2KB internal RAM

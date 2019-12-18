@@ -19,21 +19,21 @@ public:
 	bool isRunning;
 
 	void run();
+	void reset();
 	void destroy();
 
 private:
-	Cartridge cartridge;
+	Cartridge* cartridge;
 
-	Memory cpuMemory;
-	Memory ppuMemory;
+	Memory* memory;
 
-	CPU cpu;
-	PPU ppu;
+	CPU* cpu;
+	PPU* ppu;
 	//APU apu;
 
 	//MMU mmu;
 
-	GUI gui;
+	GUI* gui;
 
 	bool loadCartridge(Cartridge cartridge);
 };

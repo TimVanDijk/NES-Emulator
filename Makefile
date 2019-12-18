@@ -3,7 +3,7 @@ SOURCE	= emulator.cpp	APU.cpp Cartridge.cpp CPU.cpp GUI.cpp Globals.cpp Memory.c
 HEADER	= APU.h Cartridge.h CPU.h Globals.h GUI.h Memory.h NES.h PPU.h
 OUT		= NES-emulator
 CC		= g++
-COMPILER_FLAGS	= -pthread -W -Wall -Werror -c 
+COMPILER_FLAGS	= -std=c++11 -pthread -W -Wall -c 
 LINKER_FLAGS	= -lSDL2
 test:
 	make build;
@@ -14,7 +14,7 @@ build:
 	$(CC) $(OBJS) $(LINKER_FLAGS) -o $(OUT)
 
 run:
-	./NES-emulator roms/zelda.nes
+	./NES-emulator roms/balloon_fight.nes
 
 clean:
 	rm -f $(OBJS) $(OUT)

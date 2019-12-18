@@ -4,13 +4,18 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "Globals.h"
-
 using namespace std;
 
 Cartridge::Cartridge() { }
 
-Cartridge::Cartridge(char* path) {
+Cartridge::Cartridge(char* path, Memory* memory) {
+	this->memory = memory;
+
+	loadRom(path);
+	parseRom();
+}
+
+void Cartridge::loadRom(char* path) {
 	// Open romFile.
 	FILE* romFile = fopen(path, "rb");
 	if (romFile == NULL) {
@@ -37,4 +42,26 @@ Cartridge::Cartridge(char* path) {
 
 	// Close romFile.
 	fclose(romFile);
+}
+
+void Cartridge::parseRom() {
+	// Check magic
+	if (!(romData[0] == 'N' && romData[1] == 'E' && romData[2] == 'S' && romData[3] == 0x1A)) {
+		cout << "Magic invalid." << endl;
+		exit(1);
+	}
+
+	// Parse remainder of header
+	prgSize = romData[4] * 0x4000;
+	chrSize = romData[5] * 0x2000;
+
+	prgData = romData + 16;
+	chrData = prgData + prgSize;
+
+	mapperNr = (romData[7] & 0xF0) | ((romData[6] & 0xF0) >> 4);
+
+	region = romData[10] & 0x3;
+
+	memory->setPrgRomA(prgData);
+	memory->setPrgRomB(prgData);
 }

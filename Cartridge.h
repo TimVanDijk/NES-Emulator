@@ -1,15 +1,31 @@
 #ifndef NESEMU_CARTRIDGE_H
 #define NESEMU_CARTRIDGE_H
 
-#include <stdint.h>
+#include "Globals.h"
+
+#include "Memory.h"
 
 class Cartridge {
 public:	
 	Cartridge();
-	Cartridge(char* path);
-	uint8_t* romData;
+	Cartridge(char* path, Memory* memory);
+	
 
 private:
-	char* path;
+	Memory* memory;
+
+	Byte* romData;
+
+	Byte* prgData;
+	Byte* chrData;
+
+	uint32_t prgSize;
+	uint32_t chrSize;
+
+	Byte mapperNr;
+	Byte region;
+
+	void loadRom(char* path);
+	void parseRom();
 };
 #endif

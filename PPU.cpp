@@ -4,7 +4,7 @@ using namespace std;
 
 PPU::PPU() { }
 
-PPU::PPU(Memory mmuMemory) {
+PPU::PPU(Memory* mmuMemory) {
 	this->mmuMemory = mmuMemory;
 }
 

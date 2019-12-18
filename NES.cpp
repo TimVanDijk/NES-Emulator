@@ -1,50 +1,47 @@
 #include "NES.h"
 
+#include <iostream>
+#include <cstdio>
+
 using namespace std;
 
 NES::NES(char* filepath, int width, int height) {
-	cartridge = Cartridge(filepath);
+	memory = new Memory();
+	cartridge = new Cartridge(filepath, memory);
 
-	cpuMemory = Memory();
-	ppuMemory = Memory();
-
-	cpu = CPU(cpuMemory);
-	ppu = PPU(ppuMemory);
+	cpu = new CPU(memory);
+	ppu = new PPU(memory);
 	//apu = apu.initialize();
-
 	//mmu = mmu.initialize();
 
-	gui = GUI(width, height);
-}
-
-
-bool NES::loadCartridge(Cartridge cartridge) {
-	Byte* program = cartridge.romData;
-	program--;
-	//Copy to memory;
-	return true;
+	gui = new GUI(width, height);
 }
 
 void NES::run() {
 	while (isRunning) {
 		// TODO: handle interrupts
-		cpu.step();
+		cpu->step();
 
 		//On an NTSC system, there are exactly three PPU ticks per CPU cycle
-		ppu.step();
-		ppu.step();
-		ppu.step();
+		ppu->step();
+		ppu->step();
+		ppu->step();
 	}
 }
 
+void NES::reset() {
+	cpu->reset();
+	memory->reset();
+
+}
+
 void NES::destroy() {
-	//if (&cartridge != NULL) free(&cartridge);
-	//if (&cpuMemory != NULL) free(&cpuMemory);
-	//if (&ppuMemory != NULL) free(&ppuMemory);
-	//if (&cpu != NULL) free(&cpu);
-	//if (&ppu != NULL) free(&ppu);
+	if (cartridge 	!= NULL) delete cartridge;
+	if (memory 		!= NULL) delete memory;
+	if (cpu 		!= NULL) delete cpu;
+	if (ppu 		!= NULL) delete ppu;
 	//if (&apu != NULL) free(&apu);
 	//if (&mmu != NULL) free(&mmu);
-	//if (&gui != NULL) free(&gui);
-	//free(this);
+	if (gui 		!= NULL) delete gui;
+	delete this;
 }
