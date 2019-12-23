@@ -12,4 +12,6 @@ typedef int16_t SignedWord;
 
 typedef uint16_t Address;
 
+#define UNUSED(x) (void)(x)
+
 #endif

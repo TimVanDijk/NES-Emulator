@@ -34,18 +34,107 @@ private:
 	Word PC;	// program counter
 
 
-	typedef void (*fpCode)(Word);
-	typedef Word (*fpAddr)();
+	//typedef void (*fpCode)(Address);
+	//typedef Address (*fpAddr)();
 
 	struct Instr {
-		fpAddr addr;
-		fpCode code;
+		Address (CPU::*addr)();
+		void (CPU::*code)(Address);
 		Byte cycles;
 	};
 
 	Instr InstrTable[0xFF];
-};
+	void initializeInstructionTable();
 
+	// ADDRESSING MODES
+
+	Address ADDR_ACC();		// ACCUMULATOR
+	Address ADDR_IMM();		// IMMEDIATE
+	Address ADDR_ABS();		// ABSOLUTE
+	Address ADDR_ZP();		// ZERO PAGE 
+	Address ADDR_ZPX();		// INDEXED ZERO PAGE X
+	Address ADDR_ZPY();		// INDEXED ZERO PAGE Y
+	Address ADDR_ABSX();	// INDEXED ABSOLUTE X
+	Address ADDR_ABSY();	// INDEXED ABSOLUTE Y
+	Address ADDR_IMPL();	// IMPLIED
+	Address ADDR_REL();		// RELATIVE
+	Address ADDR_INDX();	// INDEXED INDIRECT X
+	Address ADDR_INDY();	// INDIRECT INDEXED Y
+	Address ADDR_ABSI();	// ABSOLUTE INDIRECT 
+
+	// OPCODES
+	void OP_ADC(Address data);
+	void OP_AND(Address data);
+	void OP_ASL(Address data);
+
+	void OP_BCC(Address data);
+	void OP_BCS(Address data);
+	void OP_BEQ(Address data);
+	void OP_BIT(Address data);
+	void OP_BMI(Address data);
+	void OP_BNE(Address data);
+	void OP_BPL(Address data);
+	void OP_BRK(Address data);
+	void OP_BVC(Address data);
+	void OP_BVS(Address data);
+
+	void OP_CLC(Address data);
+	void OP_CLD(Address data);
+	void OP_CLI(Address data);
+	void OP_CLV(Address data);
+	void OP_CMP(Address data);
+	void OP_CPX(Address data);
+	void OP_CPY(Address data);
+
+	void OP_DEC(Address data);
+	void OP_DEX(Address data);
+	void OP_DEY(Address data);
+
+	void OP_EOR(Address data);
+
+	void OP_INC(Address data);
+	void OP_INX(Address data);
+	void OP_INY(Address data);
+
+	void OP_JMP(Address data);
+	void OP_JSR(Address data);
+
+	void OP_LDA(Address data);
+	void OP_LDX(Address data);
+	void OP_LDY(Address data);
+	void OP_LSR(Address data);
+
+	void OP_NOP(Address data);
+
+	void OP_ORA(Address data);
+
+	void OP_PHA(Address data);
+	void OP_PHP(Address data);
+	void OP_PLA(Address data);
+	void OP_PLP(Address data);
+
+	void OP_ROL(Address data);
+	void OP_ROR(Address data);
+	void OP_RTI(Address data);
+	void OP_RTS(Address data);
+
+	void OP_SBC(Address data);
+	void OP_SEC(Address data);
+	void OP_SED(Address data);
+	void OP_SEI(Address data);
+	void OP_STA(Address data);
+	void OP_STX(Address data);
+	void OP_STY(Address data);
+
+	void OP_TAX(Address data);
+	void OP_TAY(Address data);
+	void OP_TSX(Address data);
+	void OP_TXA(Address data);
+	void OP_TXS(Address data);
+	void OP_TYA(Address data);
+
+	void OP_ILL(Address data);
+};
 
 const char instructionNames[256][10] = {
 	"BRK impl",	"ORA X,ind", 	"ILL",			"ILL",		"ILL",		"ORA zpg",		"ASL zpg",		"ILL",
