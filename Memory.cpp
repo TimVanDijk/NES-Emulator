@@ -11,7 +11,7 @@ Byte* Memory::translate(Address addr) {
 		return &ram[addr % 0x800];
 	}
 	if (addr < 0x4000) {
-		return &ppuRegs[0x2000 + (addr % 0x8)];
+		return &ppuRegs[(0x2000 + addr) % 0x8];
 	}
 	if (addr < 0x4020) {
 		return &ioRegs[addr - 0x4000];

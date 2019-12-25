@@ -3,7 +3,7 @@ SOURCE	= emulator.cpp	APU.cpp Cartridge.cpp CPU.cpp GUI.cpp Globals.cpp Memory.c
 HEADER	= APU.h Cartridge.h CPU.h Globals.h GUI.h Memory.h NES.h PPU.h
 OUT		= NES-emulator
 CC		= g++
-COMPILER_FLAGS	= -std=c++11 -pthread -W -Wall -c 
+COMPILER_FLAGS	= -std=c++11 -pthread -W -Wall -c -O3
 LINKER_FLAGS	= -lSDL2
 test:
 	make build;

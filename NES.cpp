@@ -15,10 +15,14 @@ NES::NES(char* filepath, int width, int height) {
 	//mmu = mmu.initialize();
 
 	gui = new GUI(width, height);
+
+	isRunning = true;
 }
 
 void NES::run() {
+	int i = 0;
 	while (isRunning) {
+		cpu->printState();
 		// TODO: handle interrupts
 		cpu->step();
 
@@ -26,12 +30,18 @@ void NES::run() {
 		ppu->step();
 		ppu->step();
 		ppu->step();
+
+		i++;
+		if ( i >= 10)
+			isRunning = false;
 	}
 }
 
 void NES::reset() {
 	cpu->reset();
 	memory->reset();
+
+	isRunning = true;
 
 }
 

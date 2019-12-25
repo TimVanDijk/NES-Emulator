@@ -23,6 +23,8 @@ public:
 	void step();
 	void reset();
 
+	void printState();
+
 private:
 	Memory* memory;
 
@@ -33,9 +35,11 @@ private:
 	Byte SP;	// stack pointer
 	Word PC;	// program counter
 
+	void stackPush(Byte b);
+	Byte stackPop();
 
-	//typedef void (*fpCode)(Address);
-	//typedef Address (*fpAddr)();
+	Byte serializeStatus();
+	void deserializeStatus(Byte status);
 
 	struct Instr {
 		Address (CPU::*addr)();
@@ -66,6 +70,7 @@ private:
 	void OP_ADC(Address data);
 	void OP_AND(Address data);
 	void OP_ASL(Address data);
+	void OP_ASLA(Address data);
 
 	void OP_BCC(Address data);
 	void OP_BCS(Address data);
@@ -103,6 +108,7 @@ private:
 	void OP_LDX(Address data);
 	void OP_LDY(Address data);
 	void OP_LSR(Address data);
+	void OP_LSRA(Address data);
 
 	void OP_NOP(Address data);
 
@@ -114,7 +120,9 @@ private:
 	void OP_PLP(Address data);
 
 	void OP_ROL(Address data);
+	void OP_ROLA(Address data);
 	void OP_ROR(Address data);
+	void OP_RORA(Address data);
 	void OP_RTI(Address data);
 	void OP_RTS(Address data);
 

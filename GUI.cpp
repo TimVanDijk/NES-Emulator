@@ -33,7 +33,7 @@ GUI::GUI(int width, int height) {
 	SDL_BlitSurface( logoSurface, NULL, screenSurface, NULL );
 	SDL_UpdateWindowSurface(window);
 
-	SDL_Delay(2000);
+	SDL_Delay(1000);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
