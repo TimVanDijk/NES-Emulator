@@ -20,7 +20,7 @@ public:
 	CPU();
 	CPU(Memory* memory);
 
-	void step();
+	void step(); 
 	void reset();
 
 	void printState();

@@ -29,6 +29,8 @@ Byte* Memory::translate(Address addr) {
 }
 
 Byte Memory::read(Address addr) {
+	//printf("Read %04hx: %02hhx\n", addr, *translate(addr));
+	//fflush(stdout);
 	return *translate(addr);
 }
 
@@ -39,6 +41,8 @@ Word Memory::read16(Address addr) {
 }
 
 void Memory::write(Address addr, Byte value) {
+	//printf("Write %04hx: %02hhx\n", addr, value);
+	//fflush(stdout);
 	if (addr < 0x4020 || (addr >= 0x6000 && addr < 0x8000)) {
 		*translate(addr) = value;
 	}

@@ -27,7 +27,8 @@ CPU::CPU(Memory* memory) {
 		memory->write(addr, 0x00);
 	}
 
-	PC = memory->read16(0xFFFC);
+	//PC = memory->read16(0xFFFC);
+	PC = 0xC000;
 	SP = 0xFD;
 
 	initializeInstructionTable();
@@ -49,42 +50,47 @@ void CPU::reset() {
 	P.I = 1;
 	memory->write(0x4015, 0);
 
-	PC = memory->read16(0xFFFC);
+	//PC = memory->read16(0xFFFC);
+	PC = 0xC000;
 	SP = 0xFD;
 }
 
 void CPU::printState() {
-	printf("A: 0x%02hhX\n", A);
-	printf("X: 0x%02hhX\n", X);
-	printf("Y: 0x%02hhX\n", Y);
-	printf("P: N V _ B D I Z C\n");
-	printf("   %hhx %hhx %hhx %hhx %hhx %hhx %hhx %hhx\n",
-		P.N, P.V, P._, P.B, P.D, P.I, P.Z, P.C);
-	printf("SP: 0x%02hhX\n", SP);
-	printf("PC: 0x%04hX [0x%02hhX 0x%02hhX 0x%02hhX] -> %s\n\n",
-		PC,	memory->read(PC), memory->read(PC + 1),	memory->read(PC + 2),instructionNames[memory->read(PC)]);
+	printf("%04hX  %02hhX %02hhX %02hhX\t %s\t\t\t",
+			PC,	memory->read(PC), memory->read(PC + 1),	memory->read(PC + 2),instructionNames[memory->read(PC)]);
+	printf("A:%02hhX X:%02hhX Y:%02hhX P:%02hhX SP:%02hhX - \n", A, X, Y, serializeStatus(), SP);
+	fflush(stdout);
 }
 
 void CPU::stackPush(Byte b) {
-	memory->write(0x0100 + this->SP, b);
-	if (this->SP == 0x00) this->SP = 0xFF;
-	else this->SP--;
+	memory->write(0x0100 + SP, b);
+	if (SP == 0x00) SP = 0xFF;
+	else SP--;
 }
 
 Byte CPU::stackPop() {
-	if (this->SP == 0xFF) this->SP = 0x00;
+	if (SP == 0xFF) SP = 0x00;
 	else SP++;
-	return memory->read(0x100 + this->SP);
+	return memory->read(0x0100 + SP);
 }
 
 Byte CPU::serializeStatus() {
 	// If something breaks inexplicably, this is the cause.
-	return ((Byte*)&P)[0];
+	//return ((Byte*)&P)[0];
+	return (P.N << 7) | (P.V << 6) | (P._ << 5) | (P.B << 4) | (P.D << 3) | (P.I << 2) | (P.Z << 1) | P.C;
 }
 
 void CPU::deserializeStatus(Byte status) {
 	// If something breaks inexplicably, this is the cause.
-	((Byte*)&P)[0] = status;
+	//((Byte*)&P)[0] = status;
+	P.N = (status & 0x80) ? 1 : 0;
+	P.V = (status & 0x40) ? 1 : 0;
+	P._ = 1;
+	P.B = 0;
+	P.D = (status & 0x08) ? 1 : 0;
+	P.I = (status & 0x04) ? 1 : 0;
+	P.Z = (status & 0x02) ? 1 : 0;
+	P.C = (status & 0x01) ? 1 : 0;
 }
 
 void CPU::initializeInstructionTable() {
@@ -198,9 +204,9 @@ void CPU::initializeInstructionTable() {
 
 	InstrTable[0xA0] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_LDY, 2};
 	InstrTable[0xA4] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_LDY, 3};
-	InstrTable[0xB4] = (Instr){&CPU::ADDR_ZPY,  &CPU::OP_LDY, 4};
+	InstrTable[0xB4] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_LDY, 4};
 	InstrTable[0xAC] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_LDY, 4};
-	InstrTable[0xBC] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_LDY, 4};
+	InstrTable[0xBC] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_LDY, 4};
 
 	InstrTable[0x4A] = (Instr){&CPU::ADDR_ACC,  &CPU::OP_LSRA, 2};
 	InstrTable[0x46] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_LSR, 5};
@@ -229,7 +235,7 @@ void CPU::initializeInstructionTable() {
 	InstrTable[0x26] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_ROL, 5};
 	InstrTable[0x36] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_ROL, 6};
 	InstrTable[0x2E] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_ROL, 6};
-	InstrTable[0x2E] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_ROL, 7};
+	InstrTable[0x3E] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_ROL, 7};
 
 	InstrTable[0x6A] = (Instr){&CPU::ADDR_ACC,  &CPU::OP_RORA, 2};
 	InstrTable[0x66] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_ROR, 5};
@@ -290,21 +296,21 @@ Address CPU::ADDR_IMM() {
 }
 
 Address CPU::ADDR_ABS() {
-	Address addr = PC;
+	Address addr = memory->read16(PC);
 	PC += 2;
 	return addr;
 }
 
 Address CPU::ADDR_ZP() {
-	return PC++;
+	return memory->read(PC++);
 }
 
 Address CPU::ADDR_ZPX() {
-	return X + memory->read(PC++);
+	return (X + memory->read(PC++)) % 256;
 }
 
 Address CPU::ADDR_ZPY() {
-	return Y + memory->read(PC++);
+	return (Y + memory->read(PC++)) % 256;
 }
 
 Address CPU::ADDR_ABSX() {
@@ -330,17 +336,34 @@ Address CPU::ADDR_REL() {
 }
 
 Address CPU::ADDR_INDX() {
-	return memory->read16((X + PC++) & 0xFF);
+	Address lo;
+	Address hi;
+	
+	lo = (memory->read(PC++) + X) & 0xFF;
+	hi = (lo + 1) & 0xFF;
+
+	return  memory->read(lo) + (memory->read(hi) << 8);
 }
 
 Address CPU::ADDR_INDY() {
-	return memory->read(PC++) + Y;
+	Address lo;
+	Address hi;
+	
+	lo = memory->read(PC++);
+	hi = (lo + 1) % 256;
+
+	return  memory->read(lo) + (memory->read(hi) << 8) + Y;
 }
 
 Address CPU::ADDR_ABSI() {
-	Address addr = memory->read(PC);
+	Address addr = memory->read16(PC);
 	PC += 2;
-	return addr;
+
+	// Indirect JMP bug
+	Address lo = memory->read(addr);
+	Address hi = memory->read((addr & 0xFF00) + ((addr + 1) & 0x00FF));
+
+	return lo + (hi << 8);
 }
 
 
@@ -350,10 +373,10 @@ void CPU::OP_ADC(Address data) {
 	// Add the two values along with the carry bit.
 	// This might result in an overflow, hence the Word variable.
 	Byte val = memory->read(data);
-	Word res = A +val + P.C;
+	Word res = A + val + P.C;
 
 	P.C = (res & 0x0100) ? 1 : 0;
-	P.Z = (res == 0) ? 1 : 0;
+	P.Z = ((res & 0xFF) == 0) ? 1 : 0;
 	P.N = (res & 0x80) ? 1 : 0;
 	P.V = !((A^val) & 0x80) && ((A^res) & 0x80) ? 1 : 0;
 
@@ -404,7 +427,9 @@ void CPU::OP_BEQ(Address data) {
 
 void CPU::OP_BIT(Address data) {
 	Byte val = memory->read(data);
+
 	P.Z = ((A & val) == 0) ? 1 : 0;
+
 	P.V = (val & 0x40) ? 1 : 0;
 	P.N = (val & 0x80) ? 1 : 0;
 }
@@ -433,9 +458,10 @@ void CPU::OP_BRK(Address data) {
 	stackPush(PC & 0xFF);
 
 	stackPush(serializeStatus());
+	P.B = 1;
 
 	PC = memory->read16(0xFFFE);
-	P.B = 1;
+	
 }
 
 void CPU::OP_BVC(Address data) {
@@ -518,8 +544,8 @@ void CPU::OP_DEY(Address data) {
 
 void CPU::OP_EOR(Address data) {
 	A ^= memory->read(data);
-	P.Z = (X == 0) ? 1 : 0;
-	P.N = (X & 0x80) ? 1 : 0;
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_INC(Address data) {
@@ -548,7 +574,7 @@ void CPU::OP_INY(Address data) {
 void CPU::OP_JMP(Address data) {
 	UNUSED(data);
 	
-	PC = memory->read16(data);
+	PC = data;
 }
 
 void CPU::OP_JSR(Address data) {
@@ -619,18 +645,21 @@ void CPU::OP_PHA(Address data) {
 
 void CPU::OP_PHP(Address data) {
 	UNUSED(data);
-	stackPush(serializeStatus());
+	stackPush(serializeStatus() | 0x10);
 }
 
 void CPU::OP_PLA(Address data) {
 	UNUSED(data);
 
 	A = stackPop();
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_PLP(Address data) {
 	UNUSED(data);
 	deserializeStatus(stackPop());
+	P._ = 1;
 }
 
 void CPU::OP_ROL(Address data) {
@@ -661,7 +690,7 @@ void CPU::OP_ROR(Address data) {
 
 	P.C = (old & 0x01) ? 1 : 0;
 	P.Z = (res == 0) ? 1 : 0;
-	P.N = (res & 0x01) ? 1 : 0;
+	P.N = (res & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_RORA(Address data) {
@@ -672,7 +701,7 @@ void CPU::OP_RORA(Address data) {
 
 	A = res;
 	P.Z = (A == 0) ? 1 : 0;
-	P.N = (A & 0x01) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_RTI(Address data) {
@@ -703,7 +732,7 @@ void CPU::OP_SBC(Address data) {
 	Word res = A + val + P.C;
 
 	P.C = (res & 0x0100) ? 1 : 0;
-	P.Z = (res == 0) ? 1 : 0;
+	P.Z = ((res & 0xFF) == 0) ? 1 : 0;
 	P.N = (res & 0x80) ? 1 : 0;
 	P.V = !((A^val) & 0x80) && ((A^res) & 0x80) ? 1 : 0;
 
@@ -740,21 +769,29 @@ void CPU::OP_STY(Address data) {
 void CPU::OP_TAX(Address data) {
 	UNUSED(data);
 	X = A;
+	P.Z = (X == 0) ? 1 : 0;
+	P.N = (X & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_TAY(Address data) {
 	UNUSED(data);
 	Y = A;
+	P.Z = (Y == 0) ? 1 : 0;
+	P.N = (Y & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_TSX(Address data) {
 	UNUSED(data);
 	X = SP;
+	P.Z = (X == 0) ? 1 : 0;
+	P.N = (X & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_TXA(Address data) {
 	UNUSED(data);
 	A = X;
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_TXS(Address data) {
@@ -765,6 +802,8 @@ void CPU::OP_TXS(Address data) {
 void CPU::OP_TYA(Address data) {
 	UNUSED(data);
 	A = Y;
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_ILL(Address data) {

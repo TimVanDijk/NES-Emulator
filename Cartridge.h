@@ -10,6 +10,9 @@ public:
 	Cartridge();
 	Cartridge(char* path, Memory* memory);
 	
+	Byte getMapperNr() {
+		return this->mapperNr;
+	}
 
 private:
 	Memory* memory;

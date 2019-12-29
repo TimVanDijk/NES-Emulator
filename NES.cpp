@@ -8,6 +8,7 @@ using namespace std;
 NES::NES(char* filepath, int width, int height) {
 	memory = new Memory();
 	cartridge = new Cartridge(filepath, memory);
+	//cout << "Mapper #" << int(cartridge->getMapperNr()) << endl;
 
 	cpu = new CPU(memory);
 	ppu = new PPU(memory);
@@ -23,6 +24,7 @@ void NES::run() {
 	int i = 0;
 	while (isRunning) {
 		cpu->printState();
+		fflush(stdout);
 		// TODO: handle interrupts
 		cpu->step();
 
@@ -32,8 +34,8 @@ void NES::run() {
 		ppu->step();
 
 		i++;
-		if ( i >= 10)
-			isRunning = false;
+		if (i == 10000)
+			return;
 	}
 }
 
