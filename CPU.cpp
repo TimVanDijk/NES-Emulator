@@ -94,7 +94,7 @@ void CPU::deserializeStatus(Byte status) {
 }
 
 void CPU::initializeInstructionTable() {
-	for (int i = 0; i < 0xFF; i++) {
+	for (int i = 0; i <= 0xFF; i++) {
 		InstrTable[i] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_ILL, 1};
 	}
 
@@ -282,6 +282,135 @@ void CPU::initializeInstructionTable() {
 	InstrTable[0x9A] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_TXS, 2};
 	InstrTable[0x98] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_TYA, 2};
 
+	// UNDOCUMENTED INSTRUCTIONS
+	InstrTable[0x0B] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_AAC, 2};
+	InstrTable[0x2B] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_AAC, 2};
+
+	InstrTable[0x87] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_AAX, 3};
+	InstrTable[0x97] = (Instr){&CPU::ADDR_ZPY,  &CPU::OP_AAX, 4};
+	InstrTable[0x83] = (Instr){&CPU::ADDR_INDX, &CPU::OP_AAX, 6};
+	InstrTable[0x8F] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_AAX, 4};
+
+	InstrTable[0x6B] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_ARR, 2};
+
+	InstrTable[0x4B] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_ASR, 2};
+
+	InstrTable[0xAB] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_ATX, 2};
+
+	InstrTable[0x9F] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_AXA, 5};
+	InstrTable[0x93] = (Instr){&CPU::ADDR_INDY, &CPU::OP_AXA, 6};
+
+	InstrTable[0xCB] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_AXS, 2};
+
+	InstrTable[0xC7] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_DCP, 5};
+	InstrTable[0xD7] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DCP, 6};
+	InstrTable[0xCF] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_DCP, 6};
+	InstrTable[0xDF] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_DCP, 7};
+	InstrTable[0xDB] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_DCP, 7};
+	InstrTable[0xC3] = (Instr){&CPU::ADDR_INDX, &CPU::OP_DCP, 8};
+	InstrTable[0xD3] = (Instr){&CPU::ADDR_INDY, &CPU::OP_DCP, 8};
+
+	InstrTable[0x04] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_DOP, 3};
+	InstrTable[0x14] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DOP, 4};
+	InstrTable[0x34] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DOP, 4};
+	InstrTable[0x44] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_DOP, 3};
+	InstrTable[0x54] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DOP, 4};
+	InstrTable[0x64] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_DOP, 3};
+	InstrTable[0x74] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DOP, 4};
+	InstrTable[0x80] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_DOP, 2};
+	InstrTable[0x82] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_DOP, 2};
+	InstrTable[0x89] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_DOP, 2};
+	InstrTable[0xC2] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_DOP, 2};
+	InstrTable[0xD4] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DOP, 4};
+	InstrTable[0xE2] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_DOP, 3};
+	InstrTable[0xF4] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_DOP, 4};
+
+	InstrTable[0xE7] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_ISC, 5};
+	InstrTable[0xF7] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_ISC, 6};
+	InstrTable[0xEF] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_ISC, 6};
+	InstrTable[0xFF] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_ISC, 7};
+	InstrTable[0xFB] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_ISC, 7};
+	InstrTable[0xE3] = (Instr){&CPU::ADDR_INDX, &CPU::OP_ISC, 8};
+	InstrTable[0xF3] = (Instr){&CPU::ADDR_INDY, &CPU::OP_ISC, 8};
+
+	InstrTable[0x02] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x12] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x22] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x32] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x42] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x52] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x62] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x72] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0x92] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0xB2] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0xD2] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+	InstrTable[0xF2] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_KIL, 1};
+
+	InstrTable[0xBB] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_LAR, 4};
+
+	InstrTable[0xA7] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_LAX, 3};
+	InstrTable[0xB7] = (Instr){&CPU::ADDR_ZPY,  &CPU::OP_LAX, 4};
+	InstrTable[0xAF] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_LAX, 4};
+	InstrTable[0xBF] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_LAX, 4};
+	InstrTable[0xA3] = (Instr){&CPU::ADDR_INDX, &CPU::OP_LAX, 6};
+	InstrTable[0xB3] = (Instr){&CPU::ADDR_INDY, &CPU::OP_LAX, 5};
+
+	InstrTable[0x1A] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_NOP, 2};
+	InstrTable[0x3A] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_NOP, 2};
+	InstrTable[0x5A] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_NOP, 2};
+	InstrTable[0x7A] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_NOP, 2};
+	InstrTable[0xDA] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_NOP, 2};
+	InstrTable[0xFA] = (Instr){&CPU::ADDR_IMPL, &CPU::OP_NOP, 2};
+
+	InstrTable[0x27] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_RLA, 5};
+	InstrTable[0x37] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_RLA, 6};
+	InstrTable[0x2F] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_RLA, 6};
+	InstrTable[0x3F] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_RLA, 7};
+	InstrTable[0x3B] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_RLA, 7};
+	InstrTable[0x23] = (Instr){&CPU::ADDR_INDX, &CPU::OP_RLA, 8};
+	InstrTable[0x33] = (Instr){&CPU::ADDR_INDY, &CPU::OP_RLA, 8};
+
+	InstrTable[0x67] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_RRA, 5};
+	InstrTable[0x77] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_RRA, 6};
+	InstrTable[0x6F] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_RRA, 6};
+	InstrTable[0x7F] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_RRA, 7};
+	InstrTable[0x7B] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_RRA, 7};
+	InstrTable[0x63] = (Instr){&CPU::ADDR_INDX, &CPU::OP_RRA, 8};
+	InstrTable[0x73] = (Instr){&CPU::ADDR_INDY, &CPU::OP_RRA, 8};
+
+	InstrTable[0xEB] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_SBC, 2};
+
+	InstrTable[0x07] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_SLO, 5};
+	InstrTable[0x17] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_SLO, 6};
+	InstrTable[0x0F] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_SLO, 6};
+	InstrTable[0x1F] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_SLO, 7};
+	InstrTable[0x1B] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_SLO, 7};
+	InstrTable[0x03] = (Instr){&CPU::ADDR_INDX, &CPU::OP_SLO, 8};
+	InstrTable[0x13] = (Instr){&CPU::ADDR_INDY, &CPU::OP_SLO, 8};
+
+	InstrTable[0x47] = (Instr){&CPU::ADDR_ZP,   &CPU::OP_SRE, 5};
+	InstrTable[0x57] = (Instr){&CPU::ADDR_ZPX,  &CPU::OP_SRE, 6};
+	InstrTable[0x4F] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_SRE, 6};
+	InstrTable[0x5F] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_SRE, 7};
+	InstrTable[0x5B] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_SRE, 7};
+	InstrTable[0x43] = (Instr){&CPU::ADDR_INDX, &CPU::OP_SRE, 8};
+	InstrTable[0x53] = (Instr){&CPU::ADDR_INDY, &CPU::OP_SRE, 8};
+
+	InstrTable[0x9E] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_SXA, 5};
+
+	InstrTable[0x9C] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_SYA, 5};
+
+	InstrTable[0x0C] = (Instr){&CPU::ADDR_ABS,  &CPU::OP_TOP, 4};
+	InstrTable[0x1C] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_TOP, 4};
+	InstrTable[0x3C] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_TOP, 4};
+	InstrTable[0x5C] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_TOP, 4};
+	InstrTable[0x7C] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_TOP, 4};
+	InstrTable[0xDC] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_TOP, 4};
+	InstrTable[0xFC] = (Instr){&CPU::ADDR_ABSX, &CPU::OP_TOP, 4};
+
+	InstrTable[0x8B] = (Instr){&CPU::ADDR_IMM,  &CPU::OP_XAA, 2};
+
+	InstrTable[0x9B] = (Instr){&CPU::ADDR_ABSY, &CPU::OP_XAS, 5};
 }
 
 // ADDRESSING MODES
@@ -611,7 +740,7 @@ void CPU::OP_LSR(Address data) {
 	memory->write(data, val);
 
 	P.Z = (val == 0) ? 1 : 0;
-	P.N = 0;
+	P.N = (val & 0x80) ? 1 : 0;
 
 }
 
@@ -623,8 +752,7 @@ void CPU::OP_LSRA(Address data) {
 	A >>= 1;
 
 	P.Z = (A == 0) ? 1 : 0;
-	P.N = 0;
-
+	P.N = (A & 0x80) ? 1 : 0;
 }
 
 void CPU::OP_NOP(Address data) {
@@ -809,4 +937,198 @@ void CPU::OP_TYA(Address data) {
 void CPU::OP_ILL(Address data) {
 	UNUSED(data);
 	printf("ILLEGAL INSTRUCTION.\n");
+}
+
+// UNDOCUMENTED
+void CPU::OP_AAC(Address data) {
+	A = A & memory->read(data);
+
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+	P.C = (A & 0x80) ? 1 : 0;
+}
+
+void CPU::OP_AAX(Address data) {
+	Byte res = A & X;
+	memory->write(data, res);
+
+	//P.N = (res & 0x80) ? 1 : 0;
+	//P.Z = (res == 0) ? 1 : 0;
+}
+
+void CPU::OP_ARR(Address data) {
+	A = A & memory->read(data);
+	A = (A >> 1) | (P.C << 7);
+
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+
+	P.C = (A & 0x40) ? 1 : 0;
+	P.V = (((A & 0x20) != 0) ^ ((A & 0x40) != 0));
+}
+
+void CPU::OP_ASR(Address data) {
+	A = A & memory->read(data);
+
+	P.C = (A & 0x01) ? 1 : 0;
+
+	A >>= 1;
+
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+}
+
+void CPU::OP_ATX(Address data) {
+	A = A & memory->read(data);
+	X = A;
+
+	P.N = (X & 0x80) ? 1 : 0;
+	P.Z = (X == 0) ? 1 : 0;
+}
+
+void CPU::OP_AXA(Address data) {
+	Byte val = A & X & 7;
+	memory->write(data, val);
+	P.N = (val & 0x80) ? 1 : 0;
+	P.Z = (val == 0) ? 1 : 0;
+}
+
+void CPU::OP_AXS(Address data) {
+	Byte val = memory->read(data);
+	X = X & A;
+	P.C = (X < val) ? 1 : 0;
+	X = X - val;
+
+	P.Z = (X == 0) ? 1 : 0;
+	P.N = (X & 0x80) ? 1 : 0;
+}
+
+void CPU::OP_DCP(Address data) {
+	Byte val = (memory->read(data) - 1) % 256;
+	memory->write(data, val);
+	P.C = (A >= val) ? 1 : 0;
+	P.Z = (A == val) ? 1 : 0;
+	P.N = (A - val) & 0x80 ? 1 : 0;
+}
+
+void CPU::OP_DOP(Address data) {
+	UNUSED(data);
+}
+
+void CPU::OP_ISC(Address data) {
+	Byte val = (memory->read(data) + 1) & 0xFF;
+	memory->write(data, val);
+	Word res = A - val - (1 - P.C);
+
+	P.Z = (res == 0) ? 1 : 0;
+	P.N = (res & 0x80) ? 1 : 0;
+	P.V = (((A ^ val) & (A ^ res) & 0x80) != 0);
+	P.C = ((res & 0x100) == 0) ? 1 : 0;
+
+	A = res & 0xFF;
+}
+
+
+void CPU::OP_KIL(Address data) {
+	UNUSED(data);
+
+	// Freeze up program counter by setting PC to current instruction
+	PC = PC - 1;
+}
+
+void CPU::OP_LAR(Address data) {
+	SP = SP & memory->read(data);
+	A = SP;
+	X = SP;
+
+	P.N = (SP & 0x80) ? 1 : 0;
+	P.Z = (SP == 0) ? 1 : 0;
+}
+
+void CPU::OP_LAX(Address data) {
+	Byte val = memory->read(data);
+	A = val;
+	X = val;
+
+	P.N = (A & 0x80) ? 1 : 0;
+	P.Z = (A == 0) ? 1 : 0;
+}
+
+void CPU::OP_RLA(Address data) {
+	Byte old = memory->read(data);
+	Byte res = (old << 1) | P.C;
+	memory->write(data, res);
+	A = A & res;
+
+	P.C = (old & 0x80) ? 1 : 0;
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+}
+
+void CPU::OP_RRA(Address data) {
+	Byte old = memory->read(data);
+	Byte val = (old >> 1) | (P.C << 7);
+	memory->write(data, val);
+	P.C = (old & 0x01) ? 1 : 0;
+
+	Word res = A + val + P.C;
+
+	P.C = (res & 0x0100) ? 1 : 0;
+	P.Z = ((res & 0xFF) == 0) ? 1 : 0;
+	P.N = (res & 0x80) ? 1 : 0;
+	P.V = !((A^val) & 0x80) && ((A^res) & 0x80) ? 1 : 0;
+
+	A = (res & 0xFF);
+}
+
+void CPU::OP_SLO(Address data) {
+	Byte val = memory->read(data);
+	P.C = (val & 0x80) ? 1 : 0;
+
+	val <<= 1;
+	memory->write(data, val);
+
+	A = A | val;
+
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+}
+
+void CPU::OP_SRE(Address data) {
+	Byte val = memory->read(data);
+
+	P.C = (val & 0x01) ? 1 : 0;
+
+	val >>= 1;
+	memory->write(data, val);
+
+	A ^= val;
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+}
+
+//TODO
+void CPU::OP_SXA(Address data) {
+	UNUSED(data);
+}
+
+//TODO
+void CPU::OP_SYA(Address data) {
+	UNUSED(data);
+}
+
+void CPU::OP_TOP(Address data) {
+	UNUSED(data);
+}
+
+void CPU::OP_XAA(Address data) {
+	Byte magic = 0xEE;
+	A = (A | magic) & X & data;
+	P.Z = (A == 0) ? 1 : 0;
+	P.N = (A & 0x80) ? 1 : 0;
+}
+
+//TODO
+void CPU::OP_XAS(Address data) {
+	UNUSED(data);
 }

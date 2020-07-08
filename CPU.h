@@ -47,7 +47,7 @@ private:
 		Byte cycles;
 	};
 
-	Instr InstrTable[0xFF];
+	Instr InstrTable[256];
 	void initializeInstructionTable();
 
 	// ADDRESSING MODES
@@ -142,8 +142,42 @@ private:
 	void OP_TYA(Address data);
 
 	void OP_ILL(Address data);
+
+	//  UNDOCUMENTED
+	void OP_AAC(Address data);
+	void OP_AAX(Address data);
+	void OP_ARR(Address data);
+	void OP_ASR(Address data);
+	void OP_ATX(Address data);
+	void OP_AXA(Address data);
+	void OP_AXS(Address data);
+
+	void OP_DCP(Address data);
+	void OP_DOP(Address data);
+
+	void OP_ISC(Address data);
+
+	void OP_KIL(Address data);
+
+	void OP_LAR(Address data);
+	void OP_LAX(Address data);
+
+	void OP_RLA(Address data);
+	void OP_RRA(Address data);
+
+	void OP_SLO(Address data);
+	void OP_SRE(Address data);
+
+	void OP_SXA(Address data);
+	void OP_SYA(Address data);
+
+	void OP_TOP(Address data);
+
+	void OP_XAA(Address data);
+	void OP_XAS(Address data);
 };
 
+//TODO ILLEGAL OPCODES
 const char instructionNames[256][10] = {
 	"BRK impl",	"ORA X,ind", 	"ILL",			"ILL",		"ILL",		"ORA zpg",		"ASL zpg",		"ILL",
 	"PHP impl",	"ORA #",		"ASL A",		"ILL",		"ILL",		"ORA abs",		"ASL abs",		"ILL",

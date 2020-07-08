@@ -68,7 +68,7 @@ for i in range(min(len(target), len(actual))):
 	t = target[i]
 	
 	if a != t:
-		for j in range(max(0, i-11), i):
+		for j in range(max(0, i-25), i):
 			print("[" + str(j) + "] Trace:    " + target[j])
 			
 		print("")
